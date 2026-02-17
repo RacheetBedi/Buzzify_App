@@ -11,6 +11,7 @@ enum NavigationPage {
   addTasks,
   createHive,
   specificHive, //This is for when the user clicks on a specific hive from the hives page.
+  trade,
 }
 
 extension NavigationPageExtension on NavigationPage {
@@ -40,6 +41,8 @@ extension NavigationPageExtension on NavigationPage {
         return 'Create Hive';
       case NavigationPage.specificHive:
         return 'Hive Name'; //This should vary based on the hive that the user is on.
+      case NavigationPage.trade:
+        return 'Trade Tasks';
       //default:
         //return '';
     }

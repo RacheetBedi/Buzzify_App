@@ -163,9 +163,7 @@ class _SpecificHiveState extends ConsumerState<SpecificHive> {
             currentUser: currentUser,
             onTradeTask: () {
               Navigator.pop(dialogContext);
-              ScaffoldMessenger.of(parentContext).showSnackBar(
-                const SnackBar(content: Text('Trade task functionality')),
-              );
+              widget.onNavigate!(NavigationPage.trade);
             },
             onDeleteTask: () {
               Navigator.pop(dialogContext);
@@ -221,7 +219,7 @@ class _SpecificHiveState extends ConsumerState<SpecificHive> {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => {}, //Needs to take us to task trading page
+            onPressed: () => widget.onNavigate!(NavigationPage.trade),
             style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100000000))),
             child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.swap_horiz, size: 30, color: Colors.white), SizedBox(width: 10), Text("Task Trading", style: TextStyle(fontFamily: 'Jomhuria', fontSize: 40, color: Colors.white))]),
           ),
