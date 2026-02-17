@@ -19,6 +19,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/experimental/json_persist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+//This is the model for the nectar points details stored by each person, throughout their lifetime in using the app.
 class NectarPointsPersonalModel{
   List<Achievements>? allAchievementsEarned;
   List<Achievements>? allGoogleClassroomAchievementsEarned;
@@ -35,4 +36,15 @@ class NectarPointsPersonalModel{
     this.numPeopleHelped,
     this.hiveMostHelped,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'allAchievementsEarned': allAchievementsEarned?.map((achievement) => achievement.toString()).toList(),
+      'allGoogleClassroomAchievementsEarned': allGoogleClassroomAchievementsEarned?.map((achievement) => achievement.toString()).toList(),
+      'numPointsEarned': numPointsEarned,
+      'numAchivementsEarned': numAchivementsEarned,
+      'numPeopleHelped': numPeopleHelped,
+      'hiveMostHelped': hiveMostHelped?.toMap(),
+    };
+  }
 }

@@ -122,4 +122,25 @@ class TaskModel {
   void setTaskProgress (String newProgress){
     task_progress = newProgress;
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'task_name': task_name,
+      'tradeable': tradeable,
+      'date_assigned': date_assigned,
+      'date_due': date_due,
+      'taskType': taskType,
+      'task_description': task_description,
+      'date_completed': date_completed,
+      'users_tasked': users_tasked.map((user) => user.toMap()).toList(),
+      'hive_ID': hive_ID,
+      'hive_name': hive_name,
+      'difficulty': difficulty,
+      'help_flagged': help_flagged,
+      'help_details': help_details,
+      'gc_task': gc_task,
+      'task_progress': task_progress,
+      'images': images
+    };
+  }
 }

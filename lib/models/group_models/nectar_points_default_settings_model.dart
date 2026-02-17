@@ -27,4 +27,12 @@ class NectarPointsDefaultSettingsModel {
   this.leaderboard_enabled,
   this.points_tradeable,
  });
+
+ Map<String, dynamic> toMap() {
+  return {
+   'icons_tradeable': icons_tradeable,
+   'leaderboard_enabled': leaderboard_enabled,
+   'points_tradeable': points_tradeable,
+  };
+ }
 }
