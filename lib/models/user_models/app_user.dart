@@ -112,4 +112,28 @@ class AppUser{
       possessions: possessions ?? this.possessions,
     );
   }
+
+  Map<String, dynamic> toShortMap(){
+    return{
+      'uid': uid,
+      'displayFirstName': displayFirstName,
+      'displayLastName': displayLastName,
+    };
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'uid': uid,
+      'displayFirstName': displayFirstName,
+      'displayLastName': displayLastName,
+      'email': email,
+      'photoURL': photoURL,
+      'isEmailVerified': isEmailVerified,
+      'phoneNumber': phoneNumber,
+      'hasCompletedSetup': hasCompletedSetup,
+      'description': description,
+      'school': school,
+      'possessions': possessions?.toMap(),
+    };
+  }
 }

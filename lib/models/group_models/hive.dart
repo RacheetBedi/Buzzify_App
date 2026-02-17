@@ -9,6 +9,7 @@ import 'package:flutter_app/models/group_models/nectar_points_default_settings_m
 import 'package:flutter_app/models/user_models/app_user.dart';
 import 'package:flutter_app/models/user_models/nectar_points_user_model.dart';
 import 'package:flutter_app/models/user_models/notifications_user_model.dart';
+import 'package:flutter_app/models/user_models/task_model.dart';
 import 'package:flutter_app/pages/Setup_Pages/login_page.dart';
 import 'package:flutter_app/providers/google_auth_service_provider.dart';
 import 'package:flutter_app/utilities/theme.dart';
@@ -54,7 +55,7 @@ class Hive {
   NectarPointsDefaultSettingsModel? nectar_points_settings;
   List<NectarPointsUserModel>? appreciation_snippet;
   List<NectarPointsUserModel>? appreciation_points_total; //This is a separate snippet for teachers, which will be used in the teacher's pet achievement. It will be separate from the regular appreciation snippet, which is used for the extrovert achievement. This is because the teacher's pet achievement requires a certain number of points from teachers, so it makes sense to have a separate snippet for that.
-  List<Task>? tasks_snippet; //Replace this with a list of taskModelObjects later when the model is actually coded
+  List<TaskModel>? tasks_snippet; //Replace this with a list of taskModelObjects later when the model is actually coded
   //Replace this with a list of appreciationSnippetModelObjects later when the model is actually coded
 
   //Each set of recent updates corresponds to 3 days of updates
@@ -65,8 +66,8 @@ class Hive {
   //Assigned tasks and completed tasks documents will be subcollections of the hive page, referenced by the tasks subcollection.
   //Under assigned/completed tasks, there will be multiple subcollections; each one will reference sets of tasks, automatically sorted by creation. 
   //Each subcollection references a document with a set of ~100 tasks, with earlier ones created before.
-  List<Task>? assigned_tasks; //Replace the data type with the task object later
-  List<Task>? completed_tasks; //Replace the data type with the task object later
+  List<TaskModel>? assigned_tasks; //Replace the data type with the task object later
+  List<TaskModel>? completed_tasks; //Replace the data type with the task object later
 
   //On initialization, only ~10 assigned, to the current user, and ~5 completed, will be loaded. For more, there will be a load more button.
 
@@ -92,4 +93,30 @@ class Hive {
     this.assigned_tasks,
     this.completed_tasks,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'hive_uid': hive_uid,
+      'hive_creator': hive_creator?.toMap(),
+      'user_role': user_role,
+      'hive_name': hive_name,
+      'hive_description': hive_description,
+      'hive_subject': hive_subject,
+      'hive_code': hive_code,
+      'points_description': points_description,
+      'icon_description': icon_description,
+      'default_settings': default_settings?.toMap(),
+      'teacher_led': teacher_led,
+      'theme_color': theme_color,
+      'hiveImage': hiveImage,
+      'nectar_points_settings': nectar_points_settings?.toMap(),
+      // For lists, we need to convert each item to a map
+      'nectar_snippet': appreciation_snippet?.map((item) => item.toMap()).toList(),
+      'nectar_points_total': appreciation_points_total?.map((item) => item.toMap()).toList(),
+      'recent_updates': recent_updates?.map((item) => item.toMap()).toList(),
+      'hive_users': hive_users?.map((user) => user.toMap()).toList(),
+      'assigned_tasks': assigned_tasks?.map((task) => task.toMap()).toList(),
+      'completed_tasks': completed_tasks?.map((task) => task.toMap()).toList(),
+    };
+  }
 }

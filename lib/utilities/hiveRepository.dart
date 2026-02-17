@@ -8,6 +8,7 @@ import 'package:flutter_app/models/group_models/nectar_points_default_settings_m
 import 'package:flutter_app/models/user_models/app_user.dart';
 import 'package:flutter_app/models/user_models/nectar_points_user_model.dart';
 import 'package:flutter_app/models/user_models/notifications_user_model.dart';
+import 'package:flutter_app/models/user_models/task_model.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/providers/hive_service_provider.dart';
 import 'package:flutter_app/providers/hive_service_provider.dart';
@@ -191,8 +192,8 @@ class HiveRepository{
     NectarPointsDefaultSettingsModel? nectar_default_settings,
     NectarPointsUserModel? nectar_points,
     List<AppUser>? hive_users,
-    List<Task>? assigned_tasks,
-    List<Task>? completed_tasks,
+    List<TaskModel>? assigned_tasks,
+    List<TaskModel>? completed_tasks,
     }) async {
 
       final hive = currentHive;
@@ -346,7 +347,6 @@ class HiveRepository{
   // Future<bool> hasCompletedHiveSetup() async {
   //   final hive = hiveDocuments;
   //   if(hive == null) return false;
-
   //   final doc = await _firestore.collection('groups').doc(uid).get();
   //   return doc.exists && (doc.data()?['hasCompletedHiveSetup'] == true);
   // }

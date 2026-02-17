@@ -19,6 +19,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/experimental/json_persist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+//This is the model for the nectar points snippets in the hive page
 class NectarPointsUserModel{
   int? numIconsEarned;
   List<Achievements>? achievementsEarned; //List of the achievements earned, which can be used to display the achievements in the profile page
@@ -34,4 +35,14 @@ class NectarPointsUserModel{
     this.popularHive,
     this.mostHelped
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'numIconsEarned': numIconsEarned,
+      'achievementsEarned': achievementsEarned?.map((achievement) => achievement.toString()).toList(),
+      'numPointsEarned': numPointsEarned,
+      'popularHive': popularHive?.toMap(),
+      'mostHelped': mostHelped?.toMap(),
+    };
+  }
 }
