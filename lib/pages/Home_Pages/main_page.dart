@@ -7,6 +7,7 @@ import 'package:flutter_app/pages/Hives_Pages/addTasks.dart';
 import 'package:flutter_app/pages/Hives_Pages/create_hive.dart';
 import 'package:flutter_app/pages/Hives_Pages/hives_body.dart';
 import 'package:flutter_app/pages/Hives_Pages/specific_hive.dart';
+import 'package:flutter_app/pages/Hives_Pages/trade.dart';
 import 'package:flutter_app/pages/Home_Pages/home_body.dart';
 import 'package:flutter_app/pages/Summaries_Pages/notifications.dart';
 import 'package:flutter_app/pages/Main_Settings_Pages/settings.dart';
@@ -99,6 +100,8 @@ class _MainPageState extends State<MainPage> {
         return CreateHive(onNavigate: _onNavigate);
       case NavigationPage.specificHive:
         return SpecificHive(hiveColor: Colors.blue, hiveIcon: const Icon(Icons.travel_explore), hiveName: "Hive 1", onNavigate: _onNavigate); //THIS SHOULD CHANGE BASED ON USER INPUT
+      case NavigationPage.trade:
+        return const Trade();
       default:
         return const SizedBox.shrink();
     }
