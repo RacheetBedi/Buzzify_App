@@ -124,23 +124,23 @@ class HiveRepository{
       final mainHiveDoc = await mainHiveRef.get();
 
       await mainHiveRef.set({
-          'hive_name': hive.hive_name,
-          'hive_description': hive.hive_description,
-          'hive_points_description': hive.points_description,
-          'appreciation_snippet': hive.appreciation_snippet, //this will change
-          'default_settings': hive.default_settings,
-          'hive_icons_description': hive.icon_description,
+          'hive_name': hive.hive_name ?? '',
+          'hive_description': hive.hive_description ?? '',
+          'hive_points_description': hive.points_description ?? '',
+          'nectar_snippet': hive.nectar_snippet?.map((item) => item.toMap()).toList() ?? [],
+          'default_settings': hive.default_settings?.toMap() ?? {},
+          'hive_icons_description': hive.icon_description ?? '',
           //'hive_join_code': hive.hive_code, do this when you code the join code auto generation
-          'hive_tasks_snippet': hive.tasks_snippet,//this will change
-          'teacher_led': hive.teacher_led,
-          'theme_color': hive.theme_color,
-          'hiveImage': hive.hiveImage,
+          'hive_tasks_snippet': hive.tasks_snippet?.map((item) => item.toMap()).toList() ?? [],
+          'teacher_led': hive.teacher_led ?? true,
+          'theme_color': hive.theme_color.hashCode.toString() ?? 'hashCodePlaceholder',
+          'hiveImage': hive.hiveImage ?? 'PhotoURLPlaceholder',
       });
 
-      //Fix the default settings, appreciation snippet, recent updates, assigned tasks, and completed tasks based on the following criteria:
+      //Fix the default settings, nectar snippet, recent updates, assigned tasks, and completed tasks based on the following criteria:
       // 1. Firestore reads/writes minimization
       // 2. Object separation (each element of the object is a separate Firestore field)
-      // 3. Ease of access (initialize snippets and the main Hive initially, but do appreciation points, assigned tasks, completed tasks, and recent updates on demand, with a load more button for the snippets)
+      // 3. Ease of access (initialize snippets and the main Hive initially, but do nectar points, assigned tasks, completed tasks, and recent updates on demand, with a load more button for the snippets)
 
       hive.hive_uid = mainHiveRef.id;
       hiveMade = true;

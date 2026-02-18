@@ -53,8 +53,8 @@ class Hive {
   Color theme_color;
   String? hiveImage;
   NectarPointsDefaultSettingsModel? nectar_points_settings;
-  List<NectarPointsUserModel>? appreciation_snippet;
-  List<NectarPointsUserModel>? appreciation_points_total; //This is a separate snippet for teachers, which will be used in the teacher's pet achievement. It will be separate from the regular appreciation snippet, which is used for the extrovert achievement. This is because the teacher's pet achievement requires a certain number of points from teachers, so it makes sense to have a separate snippet for that.
+  List<NectarPointsUserModel>? nectar_snippet;
+  List<NectarPointsUserModel>? nectar_points_total; //This is a separate snippet for teachers, which will be used in the teacher's pet achievement. It will be separate from the regular appreciation snippet, which is used for the extrovert achievement. This is because the teacher's pet achievement requires a certain number of points from teachers, so it makes sense to have a separate snippet for that.
   List<TaskModel>? tasks_snippet; //Replace this with a list of taskModelObjects later when the model is actually coded
   //Replace this with a list of appreciationSnippetModelObjects later when the model is actually coded
 
@@ -86,8 +86,8 @@ class Hive {
     required this.theme_color,
     this.hiveImage,
     this.nectar_points_settings,
-    this.appreciation_snippet,
-    this.appreciation_points_total,
+    this.nectar_snippet,
+    this.nectar_points_total,
     this.recent_updates,
     this.hive_users,
     this.assigned_tasks,
@@ -111,8 +111,8 @@ class Hive {
       'hiveImage': hiveImage,
       'nectar_points_settings': nectar_points_settings?.toMap(),
       // For lists, we need to convert each item to a map
-      'nectar_snippet': appreciation_snippet?.map((item) => item.toMap()).toList(),
-      'nectar_points_total': appreciation_points_total?.map((item) => item.toMap()).toList(),
+      'nectar_snippet': nectar_snippet?.map((item) => item.toMap()).toList(),
+      'nectar_points_total': nectar_points_total?.map((item) => item.toMap()).toList(),
       'recent_updates': recent_updates?.map((item) => item.toMap()).toList(),
       'hive_users': hive_users?.map((user) => user.toMap()).toList(),
       'assigned_tasks': assigned_tasks?.map((task) => task.toMap()).toList(),

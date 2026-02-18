@@ -10,6 +10,7 @@ import 'package:flutter_app/providers/hive_service_provider.dart';
 import 'package:flutter_app/utilities/hiveRepository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:async/async.dart';
+import 'package:get/route_manager.dart';
 
 class CreateHive extends ConsumerStatefulWidget {
   final Function(NavigationPage) onNavigate;
@@ -56,6 +57,37 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
   @override
   void initState() {
     super.initState();
+  }
+
+  createHiveSuccessPopup() async {
+    final result = await showDialog<bool>(
+      context: context, 
+      builder: (context) => AlertDialog(
+        title: const Text("Success! You have created your first hive! Congratulations on officially becoming a beekeeper."), 
+        //Make this an achievement and physically initiate the achievement reception later.
+        content: const Text("Do you wish to continue to the hive, or return to the home page?"),
+        actions: [
+          ElevatedButton(
+            onPressed: (){
+              Navigator.pop(context, true);
+            },
+            child: const Text("YES"),
+          ),
+          const SizedBox(height: 10,),
+          ElevatedButton(
+            onPressed: (){
+              Navigator.pop(context, false);
+            }, 
+            child: const Text("NO"),
+          ),
+        ]
+      ),
+    );
+      if(result == true){
+        widget.onNavigate(NavigationPage.hives);
+      } else {
+        widget.onNavigate(NavigationPage.home);
+      }
   }
 
   @override
@@ -482,6 +514,13 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
                           taskRemovalEnabled: _taskRemoval, 
                           summaryEnabled: _aiSummary, 
                           tradingEnabled: _taskTrading);
+
+                        String generateJoinCode([int length = 6]) {
+                          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                          final rnd = Random.secure();
+                          return List.generate(length, (_) => chars[rnd.nextInt(chars.length)]).join();
+                        }
+
                         final hive = Hive(
                           user_role: '', //Jeevanth needs to add this to the UI itself 
                           hive_name: hiveName.text, 
@@ -489,25 +528,25 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
                           hive_subject: _subject, 
                           default_settings: defaultSettingsDetails,
                           teacher_led: false, //Change this later to make it robust and correct when the teacher flow is added
-                          theme_color: _selectedColor
+                          theme_color: _selectedColor,
+                          hive_code: generateJoinCode(),
                         );
 
+                        try{
                         await HiveRepository(ref).createHiveDoc(hive);
+                        } catch(e) {
+                          Get.snackbar("Error", "Error creating hive: $e");
+                          return;
+                        }
+                        
+                        Get.snackbar("Success", "Hive created successfully!");
                         final hiveProvider = ref.watch(hiveServiceProvider.notifier);
                         hiveProvider.updateHive(hive);
 
-                        String generateJoinCode([int length = 6]) {
-                          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                          final rnd = Random.secure();
-                          return List.generate(length, (_) => chars[rnd.nextInt(chars.length)]).join();
-                        }
-                        hive.hive_code = generateJoinCode(); //Checking to ensure that the code does not exist in other hives will happen
-                        //once the rest of the flow is coded; it is redundant to do that now, as I don't know the exact firestore structure
-                        //within which the codes will rest yet.
+                        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        //     content: Text('Creating hive: ${hiveName.text}')));
 
-
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Creating hive: ${hiveName.text}')));
+                        createHiveSuccessPopup();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _step < 2 ? const Color.fromARGB(255, 0, 0, 0) : _selectedColor,
