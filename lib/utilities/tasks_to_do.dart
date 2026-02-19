@@ -24,17 +24,13 @@
 // Refresh every 30 seconds to check on verify email page if they have actually verified instead of an i have verified button.
 
 
-// Tasks for Jeevanth:
+/*Next Check (Jeevanth):
+1. (60 pts) Finish coding Trade Tasks, RULES NEED TO BE ADDED (You can only give your task to someone WITHIN THE SAME HIVE)
+2. (20 pts) Finish Tracking Page Widgets
+3. (20 pts) UI Fixes: Desc. Text boxes need to expand for creating hives and tasks, app bar needs to extend down more so that text doesn't overlap with logo.
+*/
 
-//Idea for Next Week:
-// Hive settings page is a step by step (Page View that scrolls horizontally through each page)...
-//Page 1: Hive Name, Description, and Subject (Dropdown Menu)
-//Page 2: Hive Icon, Hive Color, and Add Memebers
-//Page 3: Hive Settings and Creation Button
-
-//Make the back button on secondary pages take you back to previous page multiple times (using a list)
-
-/*Next Check: 
+/*Next Check (Racheet): 
 
 1. Recent Updates DateTime selection (3 days) - 60 pts
 2. Hive element addition/deletion code & functionality - 20 pts
