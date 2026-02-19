@@ -168,8 +168,24 @@ class HiveRepository{
       await completedTasksDocRef.set({
         'completed_tasks': hive.completed_tasks ?? [],
       });
+
+      UserRepository(ref).updateHivesJoinedData(latestHivesJoined: [hive]);
     } catch(err, st){
       Get.snackbar('Error', 'Failed to create Hive document: $err');
+    }
+  }
+
+  Future<void> addAssignedTask(TaskModel task) async {
+    final hive = currentHive;
+    if(hive == null) return;
+
+    final assignedTasksDocRef = _firestore.collection('groups').doc(hive.hive_uid).collection('tasks').doc('assigned_task_properties').collection('Assigned Tasks List').doc('tasks_set_1');
+    final assignedTasksDoc = await assignedTasksDocRef.get();
+
+    if(assignedTasksDoc.exists){
+      await assignedTasksDocRef.update({
+        'assigned_tasks': FieldValue.arrayUnion([task.toMap()]), //Name it something else...
+      });
     }
   }
 

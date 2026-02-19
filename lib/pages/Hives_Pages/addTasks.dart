@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/group_models/hive.dart';
 import 'package:flutter_app/models/user_models/task_model.dart';
+import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/utilities/hiveRepository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -28,18 +29,33 @@ class _AddTasksBodyState extends ConsumerState<AddTasksBody> {
   DateTime dueDate = DateTime.now();
   TimeOfDay dueTime = const TimeOfDay(hour: 23, minute: 59);
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  // List<String> hives = [
+  //   'Hive 1',
+  //   'Hive 2',
+  //   'Hive 3',
+  //   'Hive 4',
+  //   'Hive 5',
+  //   'Hive 6',
+  //   'Hive 7',
+  //   'Hive 8',
+  // ];
+
+  // Future<void> _initializeHivesData() async {
+  //   try {
+  //     final authState = ref.watch(authProvider);
+  //     final authNotifier = ref.read(authProvider.notifier);
+  //     Get.snackbar('Hives Data Initialized', 'Your hives data has been successfully initialized.');
+  //   } catch (e) {
+  //     Get.snackbar('Error Initializing Hives Data', e.toString());
+  //   }
+  // }
 
 
-  List<String> hives = [
-    'Hive 1',
-    'Hive 2',
-    'Hive 3',
-    'Hive 4',
-    'Hive 5',
-    'Hive 6',
-    'Hive 7',
-    'Hive 8',
-  ];
   String? hiveValue;
   void setHiveValue(String? value) {
     setState(() => hiveValue = value);
@@ -113,8 +129,7 @@ class _AddTasksBodyState extends ConsumerState<AddTasksBody> {
       gc_task: _isGoogleTask,
     );
     
-    // TODO: Save the task to the database using newTask
-    print('Task created: ${newTask.task_name}');
+    await HiveRepository(ref).addAssignedTask(newTask);
     Get.snackbar('Success', 'Task created: ${taskname.text}');
   }
 

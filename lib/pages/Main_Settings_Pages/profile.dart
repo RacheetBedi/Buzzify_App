@@ -186,7 +186,7 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
       String downloadURL = await snapshot.ref.getDownloadURL();
 
       String userID = provider.asData?.value?.uid ?? '';
-      UserRepository(ref).updateDocumentData(photoURL: downloadURL);
+      UserRepository(ref).updateMainDocumentData(photoURL: downloadURL);
       provider.asData?.value?.photoURL = downloadURL;
 
       setState(() {
@@ -271,22 +271,22 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
     setState(() {
       if(_isProfileEditEnabled == false){
         if(_firstNameChanged == true){
-          currentUser.updateDocumentData(displayFirstName: firstName.text);
+          currentUser.updateMainDocumentData(displayFirstName: firstName.text);
         }
         if(_lastNameChanged == true){
-          currentUser.updateDocumentData(displayLastName: lastName.text);
+          currentUser.updateMainDocumentData(displayLastName: lastName.text);
         }
         if(_usernameChanged == true){
-          currentUser.updateDocumentData(userName: username.text);
+          currentUser.updateMainDocumentData(userName: username.text);
         }
         if(_emailChanged == true){
-          currentUser.updateDocumentData(email: email.text);
+          currentUser.updateMainDocumentData(email: email.text);
         }
         if(_phoneChanged == true){
-          currentUser.updateDocumentData(phoneNumber: phone.text as int?);
+          currentUser.updateMainDocumentData(phoneNumber: phone.text as int?);
         }
         if(_descriptionChanged == true){
-          currentUser.updateDocumentData(description: description.text);
+          currentUser.updateMainDocumentData(description: description.text);
         }
         _firstNameChanged = false;
         _lastNameChanged = false;

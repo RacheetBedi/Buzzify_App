@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/enums/achievements_enum.dart';
 import 'package:flutter_app/models/group_models/hive.dart';
 import 'package:flutter_app/models/user_models/app_user.dart';
 import 'package:flutter_app/models/user_models/nectar_points_personal_model.dart';
@@ -33,14 +34,15 @@ class UserRepository {
     if(user == null) return null;
     Get.snackbar('Initializing the App User', 'Please help me');
 
-    final doc = await _firestore.collection('users').doc(user.uid).get();
-    final activityLogDoc = await _firestore.collection('users').doc(user.uid).collection('possessions').doc('activity_log').get();
-    final appreciationPointsDoc = await _firestore.collection('users').doc(user.uid).collection('possessions').doc('appreciation_points').get();
+    final mainDoc = await _firestore.collection('users').doc(user.uid).get();
+    final notificationsLogDoc = await _firestore.collection('users').doc(user.uid).collection('possessions').doc('notifications_log').get();
+    final nectarPointsDoc = await _firestore.collection('users').doc(user.uid).collection('possessions').doc('nectar_points').get();
     final hivesJoinedDoc = await _firestore.collection('users').doc(user.uid).collection('possessions').doc('hives_joined').get();
-    if(!doc.exists) return null;
-    final mainUserData = doc.data();
-    final activityLogData = activityLogDoc.data();
-    final appreciationPointsData = appreciationPointsDoc.data();
+    if(!mainDoc.exists) return null;
+    final mainUserData = mainDoc.data();
+
+    final notificationsLogData = notificationsLogDoc.data();
+    final nectarPointsData = nectarPointsDoc.data();
     final hivesJoinedData = hivesJoinedDoc.data();
 
     final updatedUser = AppUser(
@@ -63,15 +65,112 @@ class UserRepository {
       userName: mainUserData?['username'] ?? '', //Updating possessions occurrs separately; trigger a separate method here.
     );
 
+    if(notificationsLogDoc.exists){
+      updatedUser.possessions?.userNotificationLog = (notificationsLogData?['12'] as List<dynamic>?) //random DateTime.now().day value used as key for now, but will need to be updated to actually reference the database.
+        ?.map((e) => NotificationsUserModel.fromMap(e as Map<String, dynamic>))
+        .toList() ?? []; //Add a certain amount (like 3 days, 5 days, etc) of notifications
+    }
+
+    if(nectarPointsDoc.exists){
+      updatedUser.possessions?.nectarPoints = NectarPointsPersonalModel(
+        allAchievementsEarned: (nectarPointsData?['achievements_earned'] as List<dynamic>?)
+          ?.map((e) => Achievements.values.firstWhere((achievement) => achievement.toString() == e as String))
+          .toList() ?? [],
+        numPointsEarned: nectarPointsData?['num_points_earned'] ?? 0,
+        numAchivementsEarned: nectarPointsData?['num_achievements_earned'] ?? 0,
+        numPeopleHelped: nectarPointsData?['num_people_helped'] ?? 0,
+        hiveMostHelped: nectarPointsData?['hive_most_helped'] != null ? Hive.fromMap(nectarPointsData!['hive_most_helped'] as Map<String, dynamic>) : null,
+      );
+    }
+
+    if(hivesJoinedDoc.exists){
+      updatedUser.possessions?.hivesJoined = (hivesJoinedData?['hives'] as List<dynamic>?)
+        ?.map((e) => Hive.fromMap(e as Map<String, dynamic>))
+        .toList() ?? [];
+    }
+
     return updatedUser;
     } catch (e){
       Get.snackbar("Error", "Failed to initialize in user repository: $e");
       return null;
     }
   }
+
+  Future<void> updateNotificationsLogData({List<NotificationsUserModel>? latestUserNotificationLog}) async{
+    try{
+    final user = currentAppUser;
+    if(user == null) return null;
+
+    final notificationsLogDocRef = _firestore.collection('users').doc(user?.uid).collection('possessions').doc('notifications_log');
+    final notificationsLogDoc = await notificationsLogDocRef.get();
+
+    final latestUserNotificationLogMap = latestUserNotificationLog!.map((notification) => notification.toMap()).toList(); //Not actually a map, but a list
+
+    user.possessions?.userNotificationLog = latestUserNotificationLog;
+
+    if(notificationsLogDoc.exists){
+      notificationsLogDocRef.update({
+        DateTime.now().day : latestUserNotificationLogMap,
+      });
+    }
+
+    Get.snackbar('Notifications Updated Successfully', 'Your notifications log has been updated.');
+    } catch(e){
+      Get.snackbar('User Notifications Log Updating Error', e.toString());
+    }
+  }
+
+  Future<void> updateNectarPointsData({NectarPointsPersonalModel? latestNectarPoints}) async{
+    try{
+    final user = currentAppUser;
+    if(user == null) return null;
+
+    final nectarPointsDocRef = _firestore.collection('users').doc(user?.uid).collection('possessions').doc('nectar_points');
+    final nectarPointsDoc = await nectarPointsDocRef.get();
+
+    final achievementsEarnedList = latestNectarPoints?.allAchievementsEarned?.map((e) => e.toString()).toList();
+    user.possessions?.nectarPoints = latestNectarPoints;
+
+    if(nectarPointsDoc.exists){
+      nectarPointsDocRef.update({
+        'achievements_earned': achievementsEarnedList ?? [],
+        'gc_achievements_earned': latestNectarPoints?.allGoogleClassroomAchievementsEarned?.map((e) => e.toString()).toList() ?? [],
+        'num_points_earned': latestNectarPoints?.numPointsEarned ?? 0,
+        'num_achievements_earned': latestNectarPoints?.numAchivementsEarned ?? 0,
+        'num_people_helped': latestNectarPoints?.numPeopleHelped ?? 0,
+        'hive_most_helped': latestNectarPoints?.hiveMostHelped?.toShortMap() ?? {},
+      });
+    }
+    } catch(e){
+      Get.snackbar('User Nectar Points Updating Error', e.toString());
+    }
+  }
+
+  Future<void> updateHivesJoinedData({List<Hive>? latestHivesJoined}) async{
+    try{
+    final user = currentAppUser;
+    if(user == null) return null;
+
+    final hivesJoinedDocRef = _firestore.collection('users').doc(user?.uid).collection('possessions').doc('hives_joined');
+    final hivesJoinedDoc = await hivesJoinedDocRef.get();
+
+    final latestHivesJoinedMap = latestHivesJoined?.map((hive) => hive.toShortMap()).toList();
+    user.possessions?.hivesJoined = latestHivesJoined;
+
+    if(hivesJoinedDoc.exists){
+      hivesJoinedDocRef.update({
+        'hives': FieldValue.arrayUnion(latestHivesJoinedMap ?? []),
+      });
+    }
+
+    Get.snackbar('Hives Joined Updated Successfully', 'Your user personal hives list has been updated.');
+    } catch(e){
+      Get.snackbar('User Hives Joined Updating Error', e.toString());
+    }
+  }
   
   //add possessions to this
-  Future<void> updateDocumentData({
+  Future<void> updateMainDocumentData({
     String? uid,
     String? displayFirstName,
     String? displayLastName,
@@ -89,7 +188,7 @@ class UserRepository {
     String? userName,
     String? password,
     String? school,
-    Possessions? possessions,
+    // Possessions? possessions,
     }) async{
 
     final user = currentAppUser;
@@ -100,14 +199,14 @@ class UserRepository {
     final mainDocRef = _firestore.collection('users').doc(user.uid);
     final mainDoc = await mainDocRef.get();
 
-    final activityLogDocRef = _firestore.collection('users').doc(user.uid).collection('possessions').doc('activity_log');
-    final activityLogDoc = await activityLogDocRef.get();
+    // final activityLogDocRef = _firestore.collection('users').doc(user.uid).collection('possessions').doc('activity_log');
+    // final activityLogDoc = await activityLogDocRef.get();
 
-    final appreciationPointsDocRef = _firestore.collection('users').doc(user.uid).collection('possessions').doc('appreciation_points');
-    final appreciationPointsDoc = await appreciationPointsDocRef.get();
+    // final appreciationPointsDocRef = _firestore.collection('users').doc(user.uid).collection('possessions').doc('appreciation_points');
+    // final appreciationPointsDoc = await appreciationPointsDocRef.get();
 
-    final hivesJoinedDocRef = _firestore.collection('users').doc(user.uid).collection('possessions').doc('hives_joined');
-    final hivesJoinedDoc = await hivesJoinedDocRef.get();
+    // final hivesJoinedDocRef = _firestore.collection('users').doc(user.uid).collection('possessions').doc('hives_joined');
+    // final hivesJoinedDoc = await hivesJoinedDocRef.get();
 
     if(displayFirstName != null){
       user.displayFirstName = displayFirstName;
@@ -173,18 +272,18 @@ class UserRepository {
       user.school = school;
       mainUserDocUpdated = true;
     }
-    if(possessions?.userNotificationLog != null){
-      user.possessions?.userNotificationLog = possessions?.userNotificationLog;
-      mainUserDocUpdated = true;
-    }
-    if(possessions?.nectarPoints!= null){
-      user.possessions?.nectarPoints = possessions?.nectarPoints;
-      mainUserDocUpdated = true;
-    }
-    if(possessions?.hivesJoined != null){
-      user.possessions?.hivesJoined = possessions?.hivesJoined;
-      mainUserDocUpdated = true;
-    }
+    // if(possessions?.userNotificationLog != null){
+    //   user.possessions?.userNotificationLog = possessions?.userNotificationLog;
+    //   mainUserDocUpdated = true;
+    // }
+    // if(possessions?.nectarPoints!= null){
+    //   user.possessions?.nectarPoints = possessions?.nectarPoints;
+    //   mainUserDocUpdated = true;
+    // }
+    // if(possessions?.hivesJoined != null){
+    //   user.possessions?.hivesJoined = possessions?.hivesJoined;
+    //   mainUserDocUpdated = true;
+    // }
 
     if(mainDoc.exists && mainUserDocUpdated){
       final updateData = <String, dynamic>{
@@ -209,41 +308,41 @@ class UserRepository {
       await mainDocRef.update(updateData);
     }
 
-    if(possessions?.userNotificationLog != null){
-      // final activityLogData = {
-      //   'log': possessions?.userNotificationLog?.map((e) => e.toMap()).toList() ?? [],
-      // };
-      // if(activityLogDoc.exists){
-      //   await activityLogDocRef.update(activityLogData);
-      // } else {
-      //   await activityLogDocRef.set(activityLogData);
-      // }
-    }
+    // if(possessions?.userNotificationLog != null){
+    //   // final activityLogData = {
+    //   //   'log': possessions?.userNotificationLog?.map((e) => e.toMap()).toList() ?? [],
+    //   // };
+    //   // if(activityLogDoc.exists){
+    //   //   await activityLogDocRef.update(activityLogData);
+    //   // } else {
+    //   //   await activityLogDocRef.set(activityLogData);
+    //   // }
+    // }
 
-    if(possessions?.nectarPoints != null){
-      // final appreciationPointsData = possessions?.nectarPoints != null ? {
-      //   'total_points': possessions?.nectarPoints?.totalPoints ?? 0,
-      //   'points_history': possessions?.nectarPoints?.pointsHistory.map((e) => e.toMap()).toList() ?? [],
-      // } : null;
-      // if(appreciationPointsData != null){
-      //   if(appreciationPointsDoc.exists){
-      //     await appreciationPointsDocRef.update(appreciationPointsData);
-      //   } else {
-      //     await appreciationPointsDocRef.set(appreciationPointsData);
-      //   }
-      // }
-    }
+    // if(possessions?.nectarPoints != null){
+    //   // final appreciationPointsData = possessions?.nectarPoints != null ? {
+    //   //   'total_points': possessions?.nectarPoints?.totalPoints ?? 0,
+    //   //   'points_history': possessions?.nectarPoints?.pointsHistory.map((e) => e.toMap()).toList() ?? [],
+    //   // } : null;
+    //   // if(appreciationPointsData != null){
+    //   //   if(appreciationPointsDoc.exists){
+    //   //     await appreciationPointsDocRef.update(appreciationPointsData);
+    //   //   } else {
+    //   //     await appreciationPointsDocRef.set(appreciationPointsData);
+    //   //   }
+    //   // }
+    // }
 
-    if(possessions?.hivesJoined != null){
-      // final hivesJoinedData = {
-      //   'hives': possessions?.hivesJoined?.map((e) => e.toMap()).toList() ?? [],
-      // };
-      // if(hivesJoinedDoc.exists){
-      //   await hivesJoinedDocRef.update(hivesJoinedData);
-      // } else {
-      //   await hivesJoinedDocRef.set(hivesJoinedData);
-      // }
-    }
+    // if(possessions?.hivesJoined != null){
+    //   // final hivesJoinedData = {
+    //   //   'hives': possessions?.hivesJoined?.map((e) => e.toMap()).toList() ?? [],
+    //   // };
+    //   // if(hivesJoinedDoc.exists){
+    //   //   await hivesJoinedDocRef.update(hivesJoinedData);
+    //   // } else {
+    //   //   await hivesJoinedDocRef.set(hivesJoinedData);
+    //   // }
+    // }
   }
 
   Future<void> createUserDocIfNeeded(
@@ -270,13 +369,9 @@ class UserRepository {
     final docRef = _firestore.collection('users').doc(user?.uid);
     final doc = await docRef.get();
 
-    final activityLogDocRef = _firestore.collection('users').doc(user?.uid).collection('possessions').doc('activity_log');
-    final nectarPointsDocRef = _firestore.collection('users').doc(user?.uid).collection('possessions').doc('appreciation_points');
-    final hivesJoinedDocRef = _firestore.collection('users').doc(user?.uid).collection('possessions').doc('hives_joined');
-
-    final activityLogDoc = await activityLogDocRef.get();
-    final nectarPointsDoc = await nectarPointsDocRef.get();
-    final hivesJoinedDoc = await hivesJoinedDocRef.get();
+    final notificationsLogDocRef = _firestore.collection('users').doc(user?.uid).collection('possessions').doc('notifications_log').set({});
+    final nectarPointsDocRef = _firestore.collection('users').doc(user?.uid).collection('possessions').doc('nectar_points').set({});
+    final hivesJoinedDocRef = _firestore.collection('users').doc(user?.uid).collection('possessions').doc('hives_joined').set({});
 
     if (!doc.exists) {
       await docRef.set({
@@ -304,11 +399,6 @@ class UserRepository {
       });
     }
 
-    // if(!activityLogDoc.exists) {
-    //   await activityLogDocRef.set({
-
-    //   });
-    // }
     } catch(err, st){
         Get.snackbar(
           "Error",

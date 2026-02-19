@@ -16,6 +16,8 @@ import 'package:get/get_navigation/get_navigation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/instance_manager.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hive_flutter/adapters.dart' as type_adapter;
+import 'package:hive_flutter/hive_flutter.dart' as hive_flutter;
 import 'package:riverpod_annotation/experimental/json_persist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -45,14 +47,65 @@ class NotificationsUserModel{
       'longerDescription': longerDescription ?? '',
       'helpedOthers': helpedOthers ?? false,
       'achievementUnlocked': achievementUnlocked?.name ?? 'none',
-      'user' : {
-        'uid': userResponsible?.uid ?? '',
-        'name': '${userResponsible?.displayFirstName ?? ''} ${userResponsible?.displayLastName ?? ''}',
-      },
-      'hive': {
-        'hive_uid': hiveOccurred?.hive_uid ?? '',
-        'hive_name': hiveOccurred?.hive_name ?? '',
-      },
+      'user' : userResponsible?.toShortMap(),
+      'hive': hiveOccurred?.toShortMap(),
     };
   }
+
+  factory NotificationsUserModel.fromMap(Map<String, dynamic> map) {
+    return NotificationsUserModel(
+      updateTime: (map['updateTime'] as Timestamp?)?.toDate(),
+      briefDescription: map['briefDescription'] as String?,
+      longerDescription: map['longerDescription'] as String?,
+      helpedOthers: map['helpedOthers'] as bool?,
+      achievementUnlocked: map['achievementUnlocked'] != null ? Achievements.values.firstWhere((e) => e.name == map['achievementUnlocked']) : null,
+      userResponsible: map['user'] != null
+          ? AppUser.fromMap(map['user'])
+          : null,
+      hiveOccurred: map['hive'] != null
+          ? Hive.fromMap(map['hive'])
+          : null,
+    );
+  }
 }
+
+  class NotificationsUserModelAdapter extends type_adapter.TypeAdapter<NotificationsUserModel> {
+  @override
+  final int typeId = 0;
+
+  @override
+  NotificationsUserModel read(type_adapter.BinaryReader reader) {
+    return NotificationsUserModel(
+      updateTime: reader.read() as DateTime?,
+      briefDescription: reader.read() as String?,
+      longerDescription: reader.read() as String?,
+      helpedOthers: reader.read() as bool?,
+      achievementUnlocked: reader.read() != null ? Achievements.values.firstWhere((e) => e.name == reader.read()) : null,
+      userResponsible: reader.read() != null
+          ? AppUser.fromMap(reader.read())
+          : null,
+      hiveOccurred: reader.read() != null
+          ? Hive.fromMap(reader.read())
+          : null,
+    );
+  }
+
+  @override
+  void write(type_adapter.BinaryWriter writer, NotificationsUserModel obj) {
+    writer.write(obj.updateTime);
+    writer.write(obj.briefDescription);
+    writer.write(obj.longerDescription);
+    writer.write(obj.helpedOthers);
+    writer.write(obj.achievementUnlocked?.name ?? 'none');
+    if (obj.userResponsible != null) {
+      writer.write(obj.userResponsible!.toMap());
+    } else {
+      writer.write(null);
+    }
+    if (obj.hiveOccurred != null) {
+      writer.write(obj.hiveOccurred!.toShortMap());
+    } else {
+      writer.write(null);
+    }
+  }
+  }

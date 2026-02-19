@@ -175,7 +175,7 @@ class _VerifyPhoneState extends ConsumerState<VerifyPhone> {
       try{
         final authState = ref.read(authProvider);
         await user.linkWithCredential(credential);
-        await UserRepository(ref).updateDocumentData(phoneNumber: int.parse(widget.number));
+        await UserRepository(ref).updateMainDocumentData(phoneNumber: int.parse(widget.number));
         await linkSuccessPopup();
         Get.snackbar('Success', 'Phone number added successfully.');
       } on FirebaseAuthException catch (e) {

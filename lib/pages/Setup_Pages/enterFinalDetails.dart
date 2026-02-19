@@ -32,7 +32,7 @@ class _EnterfinalDetailsState extends ConsumerState<EnterfinalDetails> {
     final currentUser = UserRepository(ref).currentAppUser;
 
     if (currentUser != null) {
-      await UserRepository(ref).updateDocumentData(description: descrip);
+      await UserRepository(ref).updateMainDocumentData(description: descrip);
       return true;
     }
     else{

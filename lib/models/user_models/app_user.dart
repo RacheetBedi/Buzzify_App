@@ -5,6 +5,7 @@ import 'package:flutter_app/models/user_models/nectar_points_personal_model.dart
 import 'package:flutter_app/models/user_models/nectar_points_user_model.dart';
 import 'package:flutter_app/models/user_models/possessions.dart';
 import 'package:flutter_app/models/user_models/notifications_user_model.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class AppUser{
   String uid;
@@ -135,5 +136,14 @@ class AppUser{
       'school': school,
       'possessions': possessions?.toMap(),
     };
+  }
+
+  factory AppUser.fromMap(Map<String, dynamic> map) {
+    return AppUser(
+      uid: map['uid'] ?? '',
+      displayFirstName: map['displayFirstName'],
+      displayLastName: map['displayLastName'],
+      hasCompletedSetup: map['hasCompletedSetup'] ?? false,
+    );
   }
 }

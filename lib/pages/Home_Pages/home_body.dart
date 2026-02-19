@@ -1,8 +1,12 @@
 import 'dart:math';
+import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/enums/navigation_enum.dart';
 import 'package:flutter_app/models/user_models/app_user.dart';
+import 'package:flutter_app/models/user_models/notifications_user_model.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/utilities/userRepository.dart';
 import 'package:flutter_app/widgets/google_classroom_widget.dart';
@@ -12,6 +16,8 @@ import 'package:flutter_app/widgets/recent_updates_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBody extends ConsumerStatefulWidget {
   final Function(NavigationPage) onNavigate;
@@ -100,5 +106,44 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
         ],
       ),
     );
+  }
+}
+
+//Change this into workmanager
+  class NotificationService {
+  static const String lastUploadKey = 'last_upload_date';
+
+  Future<void> checkAndUploadDaily() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastUpload = prefs.getString(lastUploadKey);
+    final today = DateTime.now();
+
+    if (lastUpload != today) {
+      await uploadToFirestore();
+      await prefs.setString(lastUploadKey, today.toString());
+    }
+  }
+
+  Future<void> uploadToFirestore() async {
+    final box = Hive.box<List<NotificationsUserModel>>('notifications_log');
+    final localLog = box.get('log', defaultValue: <NotificationsUserModel>[]) ?? [];
+
+    if (localLog.isNotEmpty) {
+      final firestoreRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc('')
+          .collection('possessions')
+          .doc('notifications_log');
+
+      final logMaps = localLog.map((n) => n.toMap()).toList();
+      await firestoreRef.update({'notifications': FieldValue.arrayUnion(logMaps)});
+
+      // Clear local log after upload
+      await box.put('log', <NotificationsUserModel>[]);
+    }
+  }
+
+  void startDailyCheck() {
+    final _timer = Timer.periodic(const Duration(days: 1), (timer) => checkAndUploadDaily());
   }
 }

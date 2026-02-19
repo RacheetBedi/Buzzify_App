@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_app/models/group_models/hive_default_settings_model.dart';
 import 'package:flutter_app/models/group_models/nectar_points_default_settings_model.dart';
 import 'package:flutter_app/models/user_models/app_user.dart';
@@ -94,6 +95,14 @@ class Hive {
     this.completed_tasks,
   });
 
+  Map<String, dynamic> toShortMap(){
+    return {
+      'hive_uid': hive_uid,
+      'hive_name': hive_name,
+      'hive_role' : user_role,
+    };
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'hive_uid': hive_uid,
@@ -118,5 +127,18 @@ class Hive {
       'assigned_tasks': assigned_tasks?.map((task) => task.toMap()).toList(),
       'completed_tasks': completed_tasks?.map((task) => task.toMap()).toList(),
     };
+  }
+
+  factory Hive.fromMap(Map<String, dynamic> map) {
+    return Hive(
+      hive_uid: map['hive_uid'],
+      hive_name: map['hive_name'] ?? '',
+      user_role: map['user_role'] ?? '',
+      hive_description: map['hive_description'] ?? '',
+      hive_subject: map['hive_subject'] ?? '',
+      default_settings: null, 
+      teacher_led: map['teacher_led'] ?? false,
+      theme_color: map['theme_color'] != null ? Color(map['theme_color']) : Colors.blue, // Default to blue if no color is provided
+    );
   }
 }

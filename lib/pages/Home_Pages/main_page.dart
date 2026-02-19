@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/enums/navigation_enum.dart';
+import 'package:flutter_app/models/user_models/notifications_user_model.dart';
 import 'package:flutter_app/pages/Calendar_Pages/calendar_body.dart';
 import 'package:flutter_app/pages/Google_Classrom_Pages/google_classroom_body.dart';
 import 'package:flutter_app/pages/Hives_Pages/addTasks.dart';
@@ -40,6 +42,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+
     _currentPage = widget.initialPage;
     _bottomNavigationKey = GlobalKey<CurvedNavigationBarState>();
     _pageController = PageController(

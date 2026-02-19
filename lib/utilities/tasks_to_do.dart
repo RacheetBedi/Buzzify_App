@@ -33,3 +33,12 @@
 //Page 3: Hive Settings and Creation Button
 
 //Make the back button on secondary pages take you back to previous page multiple times (using a list)
+
+/*Next Check: 
+
+1. Recent Updates DateTime selection (3 days)
+2. Hive element addition/deletion code & functionality
+3. Clean up firestore database and app map, list, and variable references
+*/
+
+/*Fix notificationservice to use workmanager*/
