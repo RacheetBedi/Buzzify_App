@@ -33,7 +33,7 @@ class HiveRepository{
 
   Hive? get currentHive{
     final hiveState = ref.read(hiveServiceProvider);
-    uid = hiveState.asData?.value?.hive_uid;
+    uid = hiveState.asData?.value?.hiveUid;
     return hiveState.asData?.value;
   }
 
@@ -78,16 +78,16 @@ class HiveRepository{
       final userHives = currentUser?.possessions?.hivesJoined;
 
       for(int i = 0; i<userHives!.length; i++){
-        if(userHives[i].hive_uid == uid){
-          curUserRole = userHives[i].user_role;
+        if(userHives[i].hiveUid == uid){
+          curUserRole = userHives[i].userRole;
         }
       }
       
 
       final hive = Hive(
-        hive_uid: hiveDoc.id,
-        hive_name: mainHiveData?['hive_name'] ?? '',
-        hive_description: mainHiveData?['hive_description'] ?? '',
+        hiveUid: hiveDoc.id,
+        hiveName: mainHiveData?['hive_name'] ?? '',
+        hiveDescription: mainHiveData?['hive_description'] ?? '',
         hive_subject: mainHiveData?['hive_subject'] ?? '',
         hive_code: mainHiveData?['hive_code'] ?? '',
         points_description: mainHiveData?['points_description'] ?? '',
@@ -96,8 +96,8 @@ class HiveRepository{
         teacher_led: mainHiveData?['teacher_led'] ?? false,
         theme_color: mainHiveData?['theme_color'] ?? 'blue',
         hiveImage: mainHiveData?['hiveImage'],
-        hive_creator: mainHiveData['hiveCreatorUID'] ?? '',
-        user_role: curUserRole,
+        hiveCreator: mainHiveData['hiveCreatorUID'] ?? '',
+        userRole: curUserRole,
       );
 
 
@@ -124,8 +124,8 @@ class HiveRepository{
       final mainHiveDoc = await mainHiveRef.get();
 
       await mainHiveRef.set({
-          'hive_name': hive.hive_name ?? '',
-          'hive_description': hive.hive_description ?? '',
+          'hive_name': hive.hiveName ?? '',
+          'hive_description': hive.hiveDescription ?? '',
           'hive_points_description': hive.points_description ?? '',
           'nectar_snippet': hive.nectar_snippet?.map((item) => item.toMap()).toList() ?? [],
           'default_settings': hive.default_settings?.toMap() ?? {},
@@ -142,7 +142,7 @@ class HiveRepository{
       // 2. Object separation (each element of the object is a separate Firestore field)
       // 3. Ease of access (initialize snippets and the main Hive initially, but do nectar points, assigned tasks, completed tasks, and recent updates on demand, with a load more button for the snippets)
 
-      hive.hive_uid = mainHiveRef.id;
+      hive.hiveUid = mainHiveRef.id;
       hiveMade = true;
 
       final recentUpdatesDocRef = _firestore.collection('groups').doc(mainHiveRef.id).collection('Recent Updates').doc('set_1');
@@ -179,7 +179,7 @@ class HiveRepository{
     final hive = currentHive;
     if(hive == null) return;
 
-    final assignedTasksDocRef = _firestore.collection('groups').doc(hive.hive_uid).collection('tasks').doc('assigned_task_properties').collection('Assigned Tasks List').doc('tasks_set_1');
+    final assignedTasksDocRef = _firestore.collection('groups').doc(hive.hiveUid).collection('tasks').doc('assigned_task_properties').collection('Assigned Tasks List').doc('tasks_set_1');
     final assignedTasksDoc = await assignedTasksDocRef.get();
 
     if(assignedTasksDoc.exists){
@@ -219,33 +219,33 @@ class HiveRepository{
 
       bool mainHiveElementsChanged = false;
 
-      final mainHiveRef = _firestore.collection('groups').doc(hive?.hive_uid); 
+      final mainHiveRef = _firestore.collection('groups').doc(hive?.hiveUid); 
       final mainDoc = mainHiveRef.get();
 
       //Figure out a way so that recent updates are uploaded every day, into sets of 3 days' worth.
-      final recentUpdatesDocRef = _firestore.collection('groups').doc(hive?.hive_uid).collection('Recent Updates').doc('set_1'); 
+      final recentUpdatesDocRef = _firestore.collection('groups').doc(hive?.hiveUid).collection('Recent Updates').doc('set_1'); 
       //The set will be dependent on the number of days elapsed since the creation of the hive, divided by 3. We will automatically start deleting sets of recent updates when reaching around 50 sets (150 days).
       final recentUpdatesDoc = recentUpdatesDocRef.get();
 
-      final hiveUsersDocRef = _firestore.collection('groups').doc(hive?.hive_uid).collection('group_users').doc('user_data');
+      final hiveUsersDocRef = _firestore.collection('groups').doc(hive?.hiveUid).collection('group_users').doc('user_data');
       final hiveUsersDoc = hiveUsersDocRef.get();
 
-      final assignedTasksDocRef = _firestore.collection('groups').doc(hive?.hive_uid).collection('tasks').doc('assigned_task_properties').collection('Assigned Tasks List').doc('tasks_set_1');
+      final assignedTasksDocRef = _firestore.collection('groups').doc(hive?.hiveUid).collection('tasks').doc('assigned_task_properties').collection('Assigned Tasks List').doc('tasks_set_1');
       final assignedTasksDoc = assignedTasksDocRef.get();
-      final completedTasksDocRef = _firestore.collection('groups').doc(hive?.hive_uid).collection('tasks').doc('completed_task_properties').collection('Completed Tasks List').doc('completedTasks_set_1');
+      final completedTasksDocRef = _firestore.collection('groups').doc(hive?.hiveUid).collection('tasks').doc('completed_task_properties').collection('Completed Tasks List').doc('completedTasks_set_1');
 
-      final nectarPointsSettingsDocRef = _firestore.collection('groups').doc(hive?.hive_uid).collection('appreciation_points').doc('appreciation_properties');
-      final nectarPointsPeopleDocRef = _firestore.collection('groups').doc(hive?.hive_uid).collection('appreciation_points').doc('appreciation_people_status');
+      final nectarPointsSettingsDocRef = _firestore.collection('groups').doc(hive?.hiveUid).collection('appreciation_points').doc('appreciation_properties');
+      final nectarPointsPeopleDocRef = _firestore.collection('groups').doc(hive?.hiveUid).collection('appreciation_points').doc('appreciation_people_status');
       final nectarPointsSettingsDoc = nectarPointsSettingsDocRef.get();
       final nectarPointsPeopleDoc = nectarPointsPeopleDocRef.get();
 
       if(hive_name != null){
-        hive?.hive_name = hive_name;
+        hive?.hiveName = hive_name;
         mainHiveElementsChanged = true;
       }
 
       if(hive_description != null){
-        hive?.hive_description = hive_description;
+        hive?.hiveDescription = hive_description;
         mainHiveElementsChanged = true;
       }
 
@@ -351,7 +351,7 @@ class HiveRepository{
           if(nectar_points.mostHelped != null) '${curUser.uid}.mostHelpedMember' : nectar_points.mostHelped?.uid,
           if(nectar_points.numIconsEarned != null) '${curUser.uid}.numAchievementsEarned' : nectar_points.numIconsEarned, //Each achievement corresponds to an icon, so the numbers should be the same for both
           if(nectar_points.numPointsEarned != null) '${curUser.uid}.numPointsEarned' : nectar_points.numPointsEarned,
-          if(nectar_points.popularHive != null) '${curUser.uid}.mostPopularHive' : nectar_points.popularHive?.hive_uid,
+          if(nectar_points.popularHive != null) '${curUser.uid}.mostPopularHive' : nectar_points.popularHive?.hiveUid,
         });
       }
 

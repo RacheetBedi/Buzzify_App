@@ -1,9 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_app/models/group_models/hive_default_settings_model.dart';
 import 'package:flutter_app/models/group_models/nectar_points_default_settings_model.dart';
@@ -11,18 +6,6 @@ import 'package:flutter_app/models/user_models/app_user.dart';
 import 'package:flutter_app/models/user_models/nectar_points_user_model.dart';
 import 'package:flutter_app/models/user_models/notifications_user_model.dart';
 import 'package:flutter_app/models/user_models/task_model.dart';
-import 'package:flutter_app/pages/Setup_Pages/login_page.dart';
-import 'package:flutter_app/providers/google_auth_service_provider.dart';
-import 'package:flutter_app/utilities/theme.dart';
-import 'package:flutter_app/routing/wrapper.dart';
-import 'package:flutter_app/utilities/userRepository.dart';
-import 'package:flutter_riverpod/legacy.dart';
-import 'package:get/get_navigation/get_navigation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/instance_manager.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:riverpod_annotation/experimental/json_persist.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 /*Two scenarios:
 
@@ -39,11 +22,11 @@ is riverpod useful for hives (which are my 'groups', similar to canvas classes).
 */
 
 class Hive {
-  String? hive_uid;
-  AppUser? hive_creator;
-  String user_role;
-  String hive_name;
-  String hive_description;
+  String? hiveUid;
+  AppUser? hiveCreator;
+  String userRole;
+  String hiveName;
+  String hiveDescription;
   String hive_subject;
   String? hive_code;
   String? points_description;
@@ -73,11 +56,11 @@ class Hive {
   //On initialization, only ~10 assigned, to the current user, and ~5 completed, will be loaded. For more, there will be a load more button.
 
   Hive({
-    this.hive_uid,
-    this.hive_creator,
-    required this.user_role,
-    required this.hive_name,
-    required this.hive_description,
+    this.hiveUid,
+    this.hiveCreator,
+    required this.userRole,
+    required this.hiveName,
+    required this.hiveDescription,
     required this.hive_subject,
     this.hive_code,
     this.points_description,
@@ -97,19 +80,19 @@ class Hive {
 
   Map<String, dynamic> toShortMap(){
     return {
-      'hive_uid': hive_uid,
-      'hive_name': hive_name,
-      'hive_role' : user_role,
+      'hive_uid': hiveUid,
+      'hive_name': hiveName,
+      'hive_role' : userRole,
     };
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'hive_uid': hive_uid,
-      'hive_creator': hive_creator?.toMap(),
-      'user_role': user_role,
-      'hive_name': hive_name,
-      'hive_description': hive_description,
+      'hive_uid': hiveUid,
+      'hive_creator': hiveCreator?.toMap(),
+      'user_role': userRole,
+      'hive_name': hiveName,
+      'hive_description': hiveDescription,
       'hive_subject': hive_subject,
       'hive_code': hive_code,
       'points_description': points_description,
@@ -131,10 +114,10 @@ class Hive {
 
   factory Hive.fromMap(Map<String, dynamic> map) {
     return Hive(
-      hive_uid: map['hive_uid'],
-      hive_name: map['hive_name'] ?? '',
-      user_role: map['user_role'] ?? '',
-      hive_description: map['hive_description'] ?? '',
+      hiveUid: map['hive_uid'],
+      hiveName: map['hive_name'] ?? '',
+      userRole: map['user_role'] ?? '',
+      hiveDescription: map['hive_description'] ?? '',
       hive_subject: map['hive_subject'] ?? '',
       default_settings: null, 
       teacher_led: map['teacher_led'] ?? false,

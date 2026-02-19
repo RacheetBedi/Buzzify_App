@@ -522,9 +522,9 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
                         }
 
                         final hive = Hive(
-                          user_role: '', //Jeevanth needs to add this to the UI itself 
-                          hive_name: hiveName.text, 
-                          hive_description: hiveDesc.text, 
+                          userRole: 'owner', //Jeevanth needs to add this to the UI itself 
+                          hiveName: hiveName.text, 
+                          hiveDescription: hiveDesc.text, 
                           hive_subject: _subject, 
                           default_settings: defaultSettingsDetails,
                           teacher_led: false, //Change this later to make it robust and correct when the teacher flow is added

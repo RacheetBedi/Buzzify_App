@@ -123,8 +123,8 @@ class _AddTasksBodyState extends ConsumerState<AddTasksBody> {
       taskType: 'Mathematics',
       task_description: taskdescription.text, 
       users_tasked: [], //Placeholder, until user loading is actually coded in the backend
-      hive_ID: curHive?.hive_uid ??  'xxxxx', //Placeholder
-      hive_name: curHive?.hive_name ?? 'xxx', //Placeholder, 
+      hive_ID: curHive?.hiveUid ??  'xxxxx', //Placeholder
+      hive_name: curHive?.hiveName ?? 'xxx', //Placeholder, 
       difficulty: _difficulty ?? '', 
       gc_task: _isGoogleTask,
     );

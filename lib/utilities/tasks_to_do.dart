@@ -36,9 +36,9 @@
 
 /*Next Check: 
 
-1. Recent Updates DateTime selection (3 days)
-2. Hive element addition/deletion code & functionality
-3. Clean up firestore database and app map, list, and variable references
+1. Recent Updates DateTime selection (3 days) - 60 pts
+2. Hive element addition/deletion code & functionality - 20 pts
+3. Clean up firestore database and app map, list, and variable references - 20 pts
 */
 
 /*Fix notificationservice to use workmanager*/
