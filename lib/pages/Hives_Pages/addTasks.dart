@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/group_models/hive.dart';
 import 'package:flutter_app/models/user_models/task_model.dart';
-import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/utilities/hiveRepository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -62,7 +61,7 @@ class _AddTasksBodyState extends ConsumerState<AddTasksBody> {
   }
   String? _difficulty = "Easy Task";
 
-  List<String> Owner = [
+  List<String> owner = [
     'You',
     'BobyJoe',
     'JoeyBob',
@@ -81,7 +80,7 @@ class _AddTasksBodyState extends ConsumerState<AddTasksBody> {
       final data = res.data['results'] as List;
       return Future.value(data.asChoiceData(
         value: (i, e) => e['email'],
-        title: (i, e) => e['name']['first'] + ' ' + e['name']['last'],
+        title: (i, e) => '${e['name']['first']} ${e['name']['last']}',
         image: (i, e) => e['picture']['thumbnail'],
       ));
     } on DioException catch (e) {
@@ -116,17 +115,17 @@ class _AddTasksBodyState extends ConsumerState<AddTasksBody> {
     Hive? curHive = HiveRepository(ref).currentHive;
 
     TaskModel newTask = TaskModel(
-      task_name: taskname.text, 
+      taskName: taskname.text, 
       tradeable: _isTradeable, 
-      date_assigned: fullDateTimeAssigned, 
-      date_due: fullDateTimeDue, 
+      dateAssigned: fullDateTimeAssigned, 
+      dateDue: fullDateTimeDue, 
       taskType: 'Mathematics',
-      task_description: taskdescription.text, 
-      users_tasked: [], //Placeholder, until user loading is actually coded in the backend
-      hive_ID: curHive?.hiveUid ??  'xxxxx', //Placeholder
-      hive_name: curHive?.hiveName ?? 'xxx', //Placeholder, 
+      taskDescription: taskdescription.text, 
+      usersTasked: [], //Placeholder, until user loading is actually coded in the backend
+      hiveUiD: curHive?.hiveUid ??  'xxxxx', //Placeholder
+      hiveName: curHive?.hiveName ?? 'xxx', //Placeholder, 
       difficulty: _difficulty ?? '', 
-      gc_task: _isGoogleTask,
+      gcTask: _isGoogleTask,
     );
     
     await HiveRepository(ref).addAssignedTask(newTask);
@@ -190,7 +189,7 @@ class _AddTasksBodyState extends ConsumerState<AddTasksBody> {
               children: [
                 ElevatedButton(
                   onPressed: () async {
-                    final DateTime? selectedDate = await showDialog<DateTime>(
+                    final DateTime selectedDate = await showDialog<DateTime>(
                       context: context,
                       builder: (BuildContext context) {
                         return DatePickerDialog(
@@ -202,14 +201,9 @@ class _AddTasksBodyState extends ConsumerState<AddTasksBody> {
                         );
                       },
                     ) ?? DateTime.now();
-
-                    if (selectedDate != null) {
                       setState(() {
                         dueDate = selectedDate;
                       });
-                    } else {
-                      Get.snackbar('Error', 'Failure in retrieving the due date');
-                    }
                   },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,

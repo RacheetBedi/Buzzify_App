@@ -3,12 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/pages/Setup_Pages/verifyPhone.dart';
 import 'package:flutter_app/pages/Setup_Pages/login_page.dart';
-import 'package:flutter_app/providers/auth_provider.dart';
-import 'package:flutter_app/routing/wrapper.dart';
-import 'package:flutter_app/utilities/userRepository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class Forgot extends ConsumerStatefulWidget {
   const Forgot({super.key});
@@ -51,8 +47,9 @@ class _ForgotState extends ConsumerState<Forgot> {
       }
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email.text.trim(),);
 
-      final authNotifier = ref.read(authProvider.notifier);
-      final result = await showDialog<bool>(
+      dynamic result;
+      if(mounted){
+      result = await showDialog<bool>(
         context: context, 
         builder: (context) => AlertDialog(
           title: const Text("If your email is registered, a password reset link has been sent. Please follow the instructions in the email to reset your password."),
@@ -67,6 +64,7 @@ class _ForgotState extends ConsumerState<Forgot> {
           ]
         ),
       );
+      }
 
       if (result == true){
         Get.to(() => const LoginPage());
@@ -80,8 +78,6 @@ class _ForgotState extends ConsumerState<Forgot> {
           'Please ensure your phone number has the correct formatting. Do NOT include the country code.\nNOTE: We only accept U.S. phone numbers. If you have an international number, please enter an email instead.',
         );
       }
-
-      final authNotifier = ref.read(authProvider.notifier);
       Get.to(() => VerifyPhone('$_code${phone.text}'));
     }
   }

@@ -264,7 +264,7 @@ class _TaskDashboardWidgetState extends State<TaskDashboardWidget> {
               children: [
                 Expanded(
                   child: Text(
-                    task.task_name,
+                    task.taskName,
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -273,7 +273,7 @@ class _TaskDashboardWidgetState extends State<TaskDashboardWidget> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (task.help_flagged)
+                if (task.helpFlagged)
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8.0,
@@ -300,7 +300,7 @@ class _TaskDashboardWidgetState extends State<TaskDashboardWidget> {
               children: [
                 // Due Date
                 Text(
-                  'Due: ${_formatDate(task.date_due)}',
+                  'Due: ${_formatDate(task.dateDue)}',
                   style: TextStyle(
                     fontSize: 14.0,
                     color: isSelected ? Colors.white70 : Colors.grey[700],
@@ -308,13 +308,13 @@ class _TaskDashboardWidgetState extends State<TaskDashboardWidget> {
                 ),
               ],
             ),
-            if (task.gc_task) ...[
+            if (task.gcTask) ...[
               const SizedBox(height: 8.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Progress: ${task.task_progress}',
+                    'Progress: ${task.taskProgress}',
                     style: TextStyle(
                       fontSize: 14.0,
                       color: isSelected ? Colors.white70 : Colors.grey[700],
@@ -325,7 +325,7 @@ class _TaskDashboardWidgetState extends State<TaskDashboardWidget> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: LinearProgressIndicator(
-                      value: _parseProgress(task.task_progress),
+                      value: _parseProgress(task.taskProgress),
                       minHeight: 6.0,
                       backgroundColor:
                           isSelected ? Colors.grey[600] : Colors.grey[300],
@@ -337,7 +337,7 @@ class _TaskDashboardWidgetState extends State<TaskDashboardWidget> {
                 ],
               ),
             ],
-            if (task.date_completed != null) ...[
+            if (task.dateCompleted != null) ...[
               const SizedBox(height: 8.0),
               Container(
                 padding: const EdgeInsets.symmetric(

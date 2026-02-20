@@ -1,20 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_app/models/group_models/hive.dart';
-import 'package:flutter_app/models/user_models/nectar_points_personal_model.dart';
-import 'package:flutter_app/models/user_models/nectar_points_user_model.dart';
 import 'package:flutter_app/models/user_models/possessions.dart';
-import 'package:flutter_app/models/user_models/notifications_user_model.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class AppUser{
   String uid;
-  bool? dark_mode;
-  bool? is_teacher;
+  bool? darkMode;
+  bool? isTeacher;
   String? lang;
   int? logoPref;
   String? password;
-  int? country_code;
+  int? countryCode;
   String? displayFirstName;
   String? displayLastName;
   String? userName;
@@ -41,12 +35,12 @@ class AppUser{
     this.phoneNumber,
     required this.hasCompletedSetup,
     this.description,
-    this.dark_mode,
-    this.is_teacher,
+    this.darkMode,
+    this.isTeacher,
     this.lang,
     this.logoPref,
     this.password,
-    this.country_code,
+    this.countryCode,
     this.userName,
     this.school,
     this.possessions,
@@ -54,12 +48,12 @@ class AppUser{
 
   factory AppUser.fromFirebaseUser(User user,{
     bool hasCompletedSetup = false,
-    bool dark_mode = false,
-    bool is_teacher = false,
+    bool darkMode = false,
+    bool isTeacher = false,
     String lang = "EN",
     int logoPref = 1,
     String password = "",
-    int country_code = 1,
+    int countryCode = 1,
     String userName = "",
     String description = "",
     String firstName = "",
@@ -75,12 +69,12 @@ class AppUser{
       photoURL: user.photoURL,
       isEmailVerified: user.emailVerified,
       hasCompletedSetup: hasCompletedSetup,
-      dark_mode: dark_mode,
-      is_teacher: is_teacher,
+      darkMode: darkMode,
+      isTeacher: isTeacher,
       lang: lang,
       logoPref: logoPref,
       password: password,
-      country_code: country_code,
+      countryCode: countryCode,
       userName: userName,
       description: description,
       school: school,

@@ -27,31 +27,31 @@ class Hive {
   String userRole;
   String hiveName;
   String hiveDescription;
-  String hive_subject;
-  String? hive_code;
-  String? points_description;
-  String? icon_description;
+  String hiveSubject;
+  String? hiveCode;
+  String? pointsDescription;
+  String? iconDescription;
   //Map of tasks can only be coded when the task model object is coded
-  HiveDefaultSettingsModel? default_settings; //Replace this with a list of defaultSettingModelObjects later when the model is actually coded
-  bool teacher_led;
-  Color theme_color;
+  HiveDefaultSettingsModel? defaultSettings; //Replace this with a list of defaultSettingModelObjects later when the model is actually coded
+  bool teacherLed;
+  Color themeColor;
   String? hiveImage;
-  NectarPointsDefaultSettingsModel? nectar_points_settings;
-  List<NectarPointsUserModel>? nectar_snippet;
-  List<NectarPointsUserModel>? nectar_points_total; //This is a separate snippet for teachers, which will be used in the teacher's pet achievement. It will be separate from the regular appreciation snippet, which is used for the extrovert achievement. This is because the teacher's pet achievement requires a certain number of points from teachers, so it makes sense to have a separate snippet for that.
-  List<TaskModel>? tasks_snippet; //Replace this with a list of taskModelObjects later when the model is actually coded
+  NectarPointsDefaultSettingsModel? nectarPointsSettings;
+  List<NectarPointsUserModel>? nectarSnippet;
+  List<NectarPointsUserModel>? nectarAchievementsTotal;
+  List<TaskModel>? tasksSnippet; //Replace this with a list of taskModelObjects later when the model is actually coded
   //Replace this with a list of appreciationSnippetModelObjects later when the model is actually coded
 
   //Each set of recent updates corresponds to 3 days of updates
   //A maximum of ten sets are stored
-  List<NotificationsUserModel>? recent_updates; //Max should be ten
-  List<AppUser>? hive_users; //Document has a limit of ~2,800 users, which should be more then enough.
+  List<NotificationsUserModel>? recentUpdates; //Max should be ten
+  List<AppUser>? hiveUsers; //Document has a limit of ~2,800 users, which should be more then enough.
 
   //Assigned tasks and completed tasks documents will be subcollections of the hive page, referenced by the tasks subcollection.
   //Under assigned/completed tasks, there will be multiple subcollections; each one will reference sets of tasks, automatically sorted by creation. 
   //Each subcollection references a document with a set of ~100 tasks, with earlier ones created before.
-  List<TaskModel>? assigned_tasks; //Replace the data type with the task object later
-  List<TaskModel>? completed_tasks; //Replace the data type with the task object later
+  List<TaskModel>? assignedTasks; //Replace the data type with the task object later
+  List<TaskModel>? completedTasks; //Replace the data type with the task object later
 
   //On initialization, only ~10 assigned, to the current user, and ~5 completed, will be loaded. For more, there will be a load more button.
 
@@ -61,21 +61,22 @@ class Hive {
     required this.userRole,
     required this.hiveName,
     required this.hiveDescription,
-    required this.hive_subject,
-    this.hive_code,
-    this.points_description,
-    this.icon_description,
-    required this.default_settings,
-    required this.teacher_led,
-    required this.theme_color,
+    required this.hiveSubject,
+    this.hiveCode,
+    this.pointsDescription,
+    this.iconDescription,
+    required this.defaultSettings,
+    required this.teacherLed,
+    required this.themeColor,
     this.hiveImage,
-    this.nectar_points_settings,
-    this.nectar_snippet,
-    this.nectar_points_total,
-    this.recent_updates,
-    this.hive_users,
-    this.assigned_tasks,
-    this.completed_tasks,
+    this.nectarPointsSettings,
+    this.nectarSnippet,
+    this.nectarAchievementsTotal,
+    this.recentUpdates,
+    this.hiveUsers,
+    this.assignedTasks,
+    this.completedTasks,
+    this.tasksSnippet,
   });
 
   Map<String, dynamic> toShortMap(){
@@ -93,22 +94,22 @@ class Hive {
       'user_role': userRole,
       'hive_name': hiveName,
       'hive_description': hiveDescription,
-      'hive_subject': hive_subject,
-      'hive_code': hive_code,
-      'points_description': points_description,
-      'icon_description': icon_description,
-      'default_settings': default_settings?.toMap(),
-      'teacher_led': teacher_led,
-      'theme_color': theme_color,
+      'hive_subject': hiveSubject,
+      'hive_code': hiveCode,
+      'points_description': pointsDescription,
+      'icon_description': iconDescription,
+      'default_settings': defaultSettings?.toMap(),
+      'teacher_led': teacherLed,
+      'theme_color': themeColor,
       'hiveImage': hiveImage,
-      'nectar_points_settings': nectar_points_settings?.toMap(),
+      'nectar_points_settings': nectarPointsSettings?.toMap(),
       // For lists, we need to convert each item to a map
-      'nectar_snippet': nectar_snippet?.map((item) => item.toMap()).toList(),
-      'nectar_points_total': nectar_points_total?.map((item) => item.toMap()).toList(),
-      'recent_updates': recent_updates?.map((item) => item.toMap()).toList(),
-      'hive_users': hive_users?.map((user) => user.toMap()).toList(),
-      'assigned_tasks': assigned_tasks?.map((task) => task.toMap()).toList(),
-      'completed_tasks': completed_tasks?.map((task) => task.toMap()).toList(),
+      'nectar_snippet': nectarSnippet?.map((item) => item.toMap()).toList(),
+      'nectar_points_total': nectarAchievementsTotal?.map((item) => item.toMap()).toList(),
+      'recent_updates': recentUpdates?.map((item) => item.toMap()).toList(),
+      'hive_users': hiveUsers?.map((user) => user.toMap()).toList(),
+      'assigned_tasks': assignedTasks?.map((task) => task.toMap()).toList(),
+      'completed_tasks': completedTasks?.map((task) => task.toMap()).toList(),
     };
   }
 
@@ -118,10 +119,10 @@ class Hive {
       hiveName: map['hive_name'] ?? '',
       userRole: map['user_role'] ?? '',
       hiveDescription: map['hive_description'] ?? '',
-      hive_subject: map['hive_subject'] ?? '',
-      default_settings: null, 
-      teacher_led: map['teacher_led'] ?? false,
-      theme_color: map['theme_color'] != null ? Color(map['theme_color']) : Colors.blue, // Default to blue if no color is provided
+      hiveSubject: map['hive_subject'] ?? '',
+      defaultSettings: null, 
+      teacherLed: map['teacher_led'] ?? false,
+      themeColor: map['theme_color'] != null ? Color(map['theme_color']) : Colors.blue, // Default to blue if no color is provided
     );
   }
 }

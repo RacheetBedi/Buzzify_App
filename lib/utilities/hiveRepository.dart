@@ -88,13 +88,13 @@ class HiveRepository{
         hiveUid: hiveDoc.id,
         hiveName: mainHiveData?['hive_name'] ?? '',
         hiveDescription: mainHiveData?['hive_description'] ?? '',
-        hive_subject: mainHiveData?['hive_subject'] ?? '',
-        hive_code: mainHiveData?['hive_code'] ?? '',
-        points_description: mainHiveData?['points_description'] ?? '',
-        icon_description: mainHiveData?['icon_description'] ?? '',
-        default_settings: defaultSettings,
-        teacher_led: mainHiveData?['teacher_led'] ?? false,
-        theme_color: mainHiveData?['theme_color'] ?? 'blue',
+        hiveSubject: mainHiveData?['hive_subject'] ?? '',
+        hiveCode: mainHiveData?['hive_code'] ?? '',
+        pointsDescription: mainHiveData?['points_description'] ?? '',
+        iconDescription: mainHiveData?['icon_description'] ?? '',
+        defaultSettings: defaultSettings,
+        teacherLed: mainHiveData?['teacher_led'] ?? false,
+        themeColor: mainHiveData?['theme_color'] ?? 'blue',
         hiveImage: mainHiveData?['hiveImage'],
         hiveCreator: mainHiveData['hiveCreatorUID'] ?? '',
         userRole: curUserRole,
@@ -126,14 +126,14 @@ class HiveRepository{
       await mainHiveRef.set({
           'hive_name': hive.hiveName ?? '',
           'hive_description': hive.hiveDescription ?? '',
-          'hive_points_description': hive.points_description ?? '',
-          'nectar_snippet': hive.nectar_snippet?.map((item) => item.toMap()).toList() ?? [],
-          'default_settings': hive.default_settings?.toMap() ?? {},
-          'hive_icons_description': hive.icon_description ?? '',
+          'hive_points_description': hive.pointsDescription ?? '',
+          'nectar_snippet': hive.nectarSnippet?.map((item) => item.toMap()).toList() ?? [],
+          'default_settings': hive.defaultSettings?.toMap() ?? {},
+          'hive_icons_description': hive.iconDescription ?? '',
           //'hive_join_code': hive.hive_code, do this when you code the join code auto generation
-          'hive_tasks_snippet': hive.tasks_snippet?.map((item) => item.toMap()).toList() ?? [],
-          'teacher_led': hive.teacher_led ?? true,
-          'theme_color': hive.theme_color.hashCode.toString() ?? 'hashCodePlaceholder',
+          'hive_tasks_snippet': hive.tasksSnippet?.map((item) => item.toMap()).toList() ?? [],
+          'teacher_led': hive.teacherLed ?? true,
+          'theme_color': hive.themeColor.hashCode.toString() ?? 'hashCodePlaceholder',
           'hiveImage': hive.hiveImage ?? 'PhotoURLPlaceholder',
       });
 
@@ -154,19 +154,19 @@ class HiveRepository{
       final completedTasksDocRef = _firestore.collection('groups').doc(mainHiveRef.id).collection('tasks').doc('completed_task_properties').collection('Completed Tasks List').doc('completedTasks_set_1');
 
       await recentUpdatesDocRef.set({
-        'recent_updates': hive.recent_updates ?? [],
+        'recent_updates': hive.recentUpdates ?? [],
       });
 
       await hiveUsersDocRef.set({
-        'hive_users': hive.hive_users ?? [],
+        'hive_users': hive.hiveUsers ?? [],
       });
 
       await assignedTasksDocRef.set({
-        'assigned_tasks': hive.assigned_tasks ?? [],
+        'assigned_tasks': hive.assignedTasks ?? [],
       });
 
       await completedTasksDocRef.set({
-        'completed_tasks': hive.completed_tasks ?? [],
+        'completed_tasks': hive.completedTasks ?? [],
       });
 
       UserRepository(ref).updateHivesJoinedData(latestHivesJoined: [hive]);
@@ -250,37 +250,37 @@ class HiveRepository{
       }
 
       if(hive_subject != null){
-        hive?.hive_subject = hive_subject;
+        hive?.hiveSubject = hive_subject;
         mainHiveElementsChanged = true;
       }
 
       if(hive_code != null){
-        hive?.hive_code = hive_code;
+        hive?.hiveCode = hive_code;
         mainHiveElementsChanged = true;
       }
 
       if(points_description != null){
-        hive?.points_description = points_description;
+        hive?.pointsDescription = points_description;
         mainHiveElementsChanged = true;
       }
 
       if(icon_description != null){
-        hive?.icon_description = icon_description;
+        hive?.iconDescription = icon_description;
         mainHiveElementsChanged = true;
       }
 
       if(default_settings != null){
-        hive?.default_settings = default_settings;
+        hive?.defaultSettings = default_settings;
         mainHiveElementsChanged = true;
       }
 
       if(teacher_led != null){
-        hive?.teacher_led = teacher_led;
+        hive?.teacherLed = teacher_led;
         mainHiveElementsChanged = true;
       }
 
       if(theme_color != null){
-        hive?.theme_color = theme_color;
+        hive?.themeColor = theme_color;
         mainHiveElementsChanged = true;
       }
 
@@ -339,9 +339,9 @@ class HiveRepository{
 
       if(nectarPointsSettingsDocRef != null && nectar_default_settings != null){
         await nectarPointsSettingsDocRef.update({
-          if(nectar_default_settings.icons_tradeable != null) 'icons_tradeable' : nectar_default_settings.icons_tradeable,
-          if(nectar_default_settings.leaderboard_enabled != null) 'leaderboard_enabled' : nectar_default_settings.leaderboard_enabled,
-          if(nectar_default_settings.points_tradeable != null) 'points_tradeable' : nectar_default_settings.points_tradeable,
+          if(nectar_default_settings.iconsTradeable != null) 'icons_tradeable' : nectar_default_settings.iconsTradeable,
+          if(nectar_default_settings.leaderboardEnabled != null) 'leaderboard_enabled' : nectar_default_settings.leaderboardEnabled,
+          if(nectar_default_settings.pointsTradeable != null) 'points_tradeable' : nectar_default_settings.pointsTradeable,
         });
       }
 

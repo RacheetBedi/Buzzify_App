@@ -27,13 +27,13 @@ class _TradeState extends State<Trade> {
       name: 'Math Class',
       tasks: [
         TaskModel(
-          task_name: 'Complete Math Homework',
+          taskName: 'Complete Math Homework',
           tradeable: true,
-          date_assigned: DateTime.now(),
-          date_due: DateTime.now().add(const Duration(days: 3)),
+          dateAssigned: DateTime.now(),
+          dateDue: DateTime.now().add(const Duration(days: 3)),
           taskType: 'homework',
-          task_description: 'Finish chapter 5 exercises',
-          users_tasked: [
+          taskDescription: 'Finish chapter 5 exercises',
+          usersTasked: [
             AppUser(
               uid: 'user1',
               displayFirstName: 'Alice',
@@ -41,19 +41,19 @@ class _TradeState extends State<Trade> {
               hasCompletedSetup: true,
             )
           ],
-          hive_ID: 'hive1',
-          hive_name: 'Math Class',
+          hiveUiD: 'hive1',
+          hiveName: 'Math Class',
           difficulty: 'medium',
-          gc_task: false,
+          gcTask: false,
         ),
         TaskModel(
-          task_name: 'Read Science Chapter',
+          taskName: 'Read Science Chapter',
           tradeable: true,
-          date_assigned: DateTime.now(),
-          date_due: DateTime.now().add(const Duration(days: 2)),
+          dateAssigned: DateTime.now(),
+          dateDue: DateTime.now().add(const Duration(days: 2)),
           taskType: 'reading',
-          task_description: 'Read pages 45-67',
-          users_tasked: [
+          taskDescription: 'Read pages 45-67',
+          usersTasked: [
             AppUser(
               uid: 'user2',
               displayFirstName: 'Bob',
@@ -61,10 +61,10 @@ class _TradeState extends State<Trade> {
               hasCompletedSetup: true,
             )
           ],
-          hive_ID: 'hive1',
-          hive_name: 'Math Class',
+          hiveUiD: 'hive1',
+          hiveName: 'Math Class',
           difficulty: 'easy',
-          gc_task: false,
+          gcTask: false,
         ),
       ],
     ),
@@ -73,13 +73,13 @@ class _TradeState extends State<Trade> {
       name: 'Science Lab',
       tasks: [
         TaskModel(
-          task_name: 'Lab Report',
+          taskName: 'Lab Report',
           tradeable: true,
-          date_assigned: DateTime.now(),
-          date_due: DateTime.now().add(const Duration(days: 4)),
+          dateAssigned: DateTime.now(),
+          dateDue: DateTime.now().add(const Duration(days: 4)),
           taskType: 'lab',
-          task_description: 'Complete experiment analysis',
-          users_tasked: [
+          taskDescription: 'Complete experiment analysis',
+          usersTasked: [
             AppUser(
               uid: 'user3',
               displayFirstName: 'Charlie',
@@ -87,10 +87,10 @@ class _TradeState extends State<Trade> {
               hasCompletedSetup: true,
             )
           ],
-          hive_ID: 'hive2',
-          hive_name: 'Science Lab',
+          hiveUiD: 'hive2',
+          hiveName: 'Science Lab',
           difficulty: 'hard',
-          gc_task: false,
+          gcTask: false,
         ),
       ],
     ),
@@ -124,7 +124,7 @@ class _TradeState extends State<Trade> {
   @override
   Widget build(BuildContext context) {
     final List<TaskModel> sourceTasks = selectedHive?.tasks
-            .where((t) => t.users_tasked.isNotEmpty && t.users_tasked[0].uid == currentUserUid)
+            .where((t) => t.usersTasked.isNotEmpty && t.usersTasked[0].uid == currentUserUid)
             .toList() ??
         [];
     return Padding(
@@ -231,8 +231,8 @@ class _TradeState extends State<Trade> {
                               itemCount: sourceTasks.length,
                               itemBuilder: (context, index) {
                                 TaskModel task = sourceTasks[index];
-                                AppUser taskUser = task.users_tasked.isNotEmpty
-                                    ? task.users_tasked[0]
+                                AppUser taskUser = task.usersTasked.isNotEmpty
+                                    ? task.usersTasked[0]
                                     : AppUser(
                                         uid: 'unknown',
                                         displayFirstName: 'Unknown',
@@ -290,7 +290,7 @@ class _TradeState extends State<Trade> {
                               : Builder(builder: (context) {
                                   final hive = mockHives.firstWhere((h) => h.id == targetHiveId);
                                   final List<TaskModel> targetTasks = hive.tasks
-                                      .where((t) => t.users_tasked.isNotEmpty && t.users_tasked[0].uid != currentUserUid)
+                                      .where((t) => t.usersTasked.isNotEmpty && t.usersTasked[0].uid != currentUserUid)
                                       .toList();
 
                                   if (targetTasks.isEmpty) {
@@ -301,8 +301,8 @@ class _TradeState extends State<Trade> {
                                     itemCount: targetTasks.length,
                                     itemBuilder: (context, index) {
                                       final task = targetTasks[index];
-                                      final user = task.users_tasked.isNotEmpty
-                                          ? task.users_tasked[0]
+                                      final user = task.usersTasked.isNotEmpty
+                                          ? task.usersTasked[0]
                                           : AppUser(
                                               uid: 'unknown',
                                               displayFirstName: 'Unknown',
@@ -333,7 +333,7 @@ class _TradeState extends State<Trade> {
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Expanded(child: Text(task.task_name)),
+                                              Expanded(child: Text(task.taskName)),
                                               Text('By: ${user.displayFirstName ?? 'Unknown'}'),
                                             ],
                                           ),
@@ -480,7 +480,7 @@ class _TradeState extends State<Trade> {
               children: [
                 Expanded(
                   child: Text(
-                    task.task_name,
+                    task.taskName,
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -489,7 +489,7 @@ class _TradeState extends State<Trade> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (task.help_flagged)
+                if (task.helpFlagged)
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8.0,
@@ -523,7 +523,7 @@ class _TradeState extends State<Trade> {
                   ),
                 ),
                 Text(
-                  'Due: ${_formatDate(task.date_due)}',
+                  'Due: ${_formatDate(task.dateDue)}',
                   style: TextStyle(
                     fontSize: 14.0,
                     color: isSelected ? Colors.white70 : Colors.grey[700],
@@ -543,13 +543,13 @@ class _TradeState extends State<Trade> {
               ),
               backgroundColor: _getDifficultyColor(task.difficulty),
             ),
-            if (task.gc_task) ...[
+            if (task.gcTask) ...[
               const SizedBox(height: 8.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Progress: ${task.task_progress}',
+                    'Progress: ${task.taskProgress}',
                     style: TextStyle(
                       fontSize: 14.0,
                       color: isSelected ? Colors.white70 : Colors.grey[700],
@@ -560,7 +560,7 @@ class _TradeState extends State<Trade> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: LinearProgressIndicator(
-                      value: _parseProgress(task.task_progress),
+                      value: _parseProgress(task.taskProgress),
                       minHeight: 6.0,
                       backgroundColor:
                           isSelected ? Colors.grey[600] : Colors.grey[300],
@@ -572,7 +572,7 @@ class _TradeState extends State<Trade> {
                 ],
               ),
             ],
-            if (task.date_completed != null) ...[
+            if (task.dateCompleted != null) ...[
               const SizedBox(height: 8.0),
               Container(
                 padding: const EdgeInsets.symmetric(

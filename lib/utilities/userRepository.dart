@@ -46,14 +46,14 @@ class UserRepository {
     final hivesJoinedData = hivesJoinedDoc.data();
 
     final updatedUser = AppUser(
-      dark_mode: mainUserData?['dark_mode'] ?? false,
+      darkMode: mainUserData?['dark_mode'] ?? false,
       hasCompletedSetup: mainUserData?['hasCompletedSetup'] ?? false,
       isEmailVerified: user.isEmailVerified,
-      is_teacher: mainUserData?['is_teacher'] ?? false,
+      isTeacher: mainUserData?['is_teacher'] ?? false,
       lang: mainUserData?['lang'] ?? '',
       logoPref: mainUserData?['logo_preference'] ?? 1,
       password: mainUserData?['password'] ?? '',
-      country_code: mainUserData?['public profile']?['contact_info']?['country_code'] ?? 1,
+      countryCode: mainUserData?['public profile']?['contact_info']?['country_code'] ?? 1,
       email: user.email,
       phoneNumber: mainUserData?['public profile']?['contact_info']?['phone_number'] ?? 000000000,
       description: mainUserData?['public profile']?['description'] ?? '',
@@ -241,11 +241,11 @@ class UserRepository {
       mainUserDocUpdated = true;
     }
     if(dark_mode != null){
-      user.dark_mode = dark_mode;
+      user.darkMode = dark_mode;
       mainUserDocUpdated = true;
     }
     if(is_teacher != null){
-      user.is_teacher = is_teacher;
+      user.isTeacher = is_teacher;
       mainUserDocUpdated = true;
     }
     if(lang != null){ 
@@ -257,7 +257,7 @@ class UserRepository {
       mainUserDocUpdated = true;
     }
     if(country_code != null){
-      user.country_code = country_code;
+      user.countryCode = country_code;
       mainUserDocUpdated = true;
     }
     if(userName != null){
@@ -375,16 +375,16 @@ class UserRepository {
 
     if (!doc.exists) {
       await docRef.set({
-        "dark_mode": user.dark_mode ?? false,
+        "dark_mode": user.darkMode ?? false,
         "isEmailVerified": user?.isEmailVerified ?? false,
         "hasCompletedSetup": user.hasCompletedSetup ?? false,
-        "is_teacher": user.is_teacher ?? false,
+        "is_teacher": user.isTeacher ?? false,
         "lang": user.lang ?? 'EN',
         "logo_preference": user.logoPref ?? 1,
         "password": user.password ?? '',
         "public profile": {
           "contact_info": {
-            "country_code": user.country_code ?? 1,
+            "country_code": user.countryCode ?? 1,
             "email_address": user.email ?? '',
             "phone_number": user?.phoneNumber ?? 0000000000,
           },
@@ -421,7 +421,7 @@ class UserRepository {
     user!.displayFirstName = firstName;
     user!.displayLastName = lastName;
     user!.password = password;
-    user!.is_teacher = isTeacher;
+    user!.isTeacher = isTeacher;
     user!.school = school;
 
 
@@ -430,16 +430,16 @@ class UserRepository {
 
     if (!doc.exists) {
       await docRef.set({
-        "dark_mode": user.dark_mode ?? false,
+        "dark_mode": user.darkMode ?? false,
         "isEmailVerified": user?.isEmailVerified ?? false,
         "hasCompletedSetup": user.hasCompletedSetup ?? false,
-        "is_teacher": user.is_teacher ?? false,
+        "is_teacher": user.isTeacher ?? false,
         "lang": user.lang ?? 'EN',
         "logo_preference": user.logoPref ?? 1,
         "password": user.password ?? '',
         "public profile": {
           "contact_info": {
-            "country_code": user.country_code ?? 1,
+            "country_code": user.countryCode ?? 1,
             "email_address": user.email ?? '',
             "phone_number": user?.phoneNumber ?? 0000000000,
           },

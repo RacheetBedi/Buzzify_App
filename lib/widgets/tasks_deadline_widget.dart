@@ -38,7 +38,7 @@ class _TasksDeadlineWidgetState extends State<TasksDeadlineWidget> {
 
   void _sortTasksByDeadline() {
     sortedTasks = List<TaskModel>.from(widget.tasks);
-    sortedTasks.sort((a, b) => a.date_due.compareTo(b.date_due));
+    sortedTasks.sort((a, b) => a.dateDue.compareTo(b.dateDue));
   }
 
   Color _getHiveColor(String hiveName) {
@@ -75,8 +75,8 @@ class _TasksDeadlineWidgetState extends State<TasksDeadlineWidget> {
 
   double _getProgressPercentage(TaskModel task) {
     final now = DateTime.now();
-    final assigned = task.date_assigned;
-    final due = task.date_due;
+    final assigned = task.dateAssigned;
+    final due = task.dateDue;
 
     final totalDuration = due.difference(assigned).inHours;
     final elapsedDuration = now.difference(assigned).inHours;
@@ -87,8 +87,8 @@ class _TasksDeadlineWidgetState extends State<TasksDeadlineWidget> {
   }
 
   Widget _buildDeadlineBar(TaskModel task) {
-    final hiveColor = _getHiveColor(task.hive_name);
-    final isCompleted = task.date_completed != null;
+    final hiveColor = _getHiveColor(task.hiveName);
+    final isCompleted = task.dateCompleted != null;
     final progress = _getProgressPercentage(task);
 
     return Container(
@@ -101,7 +101,7 @@ class _TasksDeadlineWidgetState extends State<TasksDeadlineWidget> {
             children: [
               Expanded(
                 child: Text(
-                  task.task_name,
+                  task.taskName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -113,7 +113,7 @@ class _TasksDeadlineWidgetState extends State<TasksDeadlineWidget> {
               ),
               const SizedBox(width: 8),
               Text(
-                _getTimeRemaining(task.date_due),
+                _getTimeRemaining(task.dateDue),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -138,7 +138,7 @@ class _TasksDeadlineWidgetState extends State<TasksDeadlineWidget> {
           ),
           const SizedBox(height: 4),
           Text(
-            task.hive_name,
+            task.hiveName,
             style: const TextStyle(
               fontSize: 11,
               color: Color.fromARGB(179, 66, 66, 66),

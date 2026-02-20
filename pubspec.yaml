@@ -51,6 +51,7 @@ dependencies:
   hive_flutter: ^1.1.0
   workmanager: ^0.9.0+3
   shared_preferences: ^2.5.4
+  async: ^2.13.0
 
 dev_dependencies:
   riverpod_generator: ^3.0.0

@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:choice/choice.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -30,15 +29,15 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
   Color _selectedColor = const Color(0xFFFFB743);
   IconData _selectedIcon = Icons.group;
   
-  bool _isPrivate = false;
-  bool _allowInvites = true;
+  // final bool _isPrivate = false;
+  // final bool _allowInvites = true;
   bool _nectarCenter = true;
   bool _taskTrading = true;
   bool _taskAddition = true;
   bool _taskRemoval = true;
   bool _aiSummary = false;
   bool _hiveNotifications = true;
-  final List<Color> _colorOptions = [
+  final List<Color> _colorOptions = const [
     Color(0xFFFFB743),
     Color(0xFFFF7700),
     Color(0xFFFFF600),
@@ -100,7 +99,7 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
         final data = res.data['results'] as List;
         return Future.value(data.asChoiceData(
           value: (i, e) => e['email'],
-          title: (i, e) => e['name']['first'] + ' ' + e['name']['last'],
+          title: (i, e) => '${e['name']['first']} ${e['name']['last']}',
           image: (i, e) => e['picture']['thumbnail'],
         ));
       } on DioException catch (e) {
@@ -112,7 +111,7 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
       setState(() => ownerValue = value);
     }
 
-    Widget _buildStepContent() {
+    Widget buildStepContent() {
       switch (_step) {
         case 0:
           return ListView(
@@ -445,7 +444,7 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
       }
     }
 
-    void _next() {
+    void next() {
       if (_step < 2) {
         setState(() => _step += 1);
       } else {
@@ -455,7 +454,7 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
       }
     }
 
-    void _back() {
+    void back() {
       if (_step > 0) setState(() => _step -= 1);
     }
 
@@ -477,7 +476,7 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
                 ],
               ),
             ),
-            Expanded(child: _buildStepContent()),
+            Expanded(child: buildStepContent()),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
@@ -486,7 +485,7 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
                   if (_step > 0)
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: _back,
+                        onPressed: back,
                         child: const Text('Back'),
                       ),
                     )
@@ -496,17 +495,17 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
                   Expanded(
                     flex: 2,
                     child: ElevatedButton(
-                      onPressed: _step < 2 ? _next : () async {
-                        final summary = {
-                          'name': hiveName.text,
-                          'description': hiveDesc.text,
-                          'subject': _subject,
-                          'color': _selectedColor,
-                          'icon': _selectedIcon.codePoint,
-                          'members': ownerValue.map((e) => e.value).toList(),
-                          'private': _isPrivate,
-                          'allowInvites': _allowInvites,
-                        };
+                      onPressed: _step < 2 ? next : () async {
+                        // final summary = {
+                        //   'name': hiveName.text,
+                        //   'description': hiveDesc.text,
+                        //   'subject': _subject,
+                        //   'color': _selectedColor,
+                        //   'icon': _selectedIcon.codePoint,
+                        //   'members': ownerValue.map((e) => e.value).toList(),
+                        //   'private': _isPrivate,
+                        //   'allowInvites': _allowInvites,
+                        // };
                         final defaultSettingsDetails = HiveDefaultSettingsModel(
                           additionEnabled: _taskAddition, 
                           appreciationEnabled: _nectarCenter, 
@@ -525,11 +524,11 @@ class _CreateHiveState extends ConsumerState<CreateHive> {
                           userRole: 'owner', //Jeevanth needs to add this to the UI itself 
                           hiveName: hiveName.text, 
                           hiveDescription: hiveDesc.text, 
-                          hive_subject: _subject, 
-                          default_settings: defaultSettingsDetails,
-                          teacher_led: false, //Change this later to make it robust and correct when the teacher flow is added
-                          theme_color: _selectedColor,
-                          hive_code: generateJoinCode(),
+                          hiveSubject: _subject, 
+                          defaultSettings: defaultSettingsDetails,
+                          teacherLed: false, //Change this later to make it robust and correct when the teacher flow is added
+                          themeColor: _selectedColor,
+                          hiveCode: generateJoinCode(),
                         );
 
                         try{
